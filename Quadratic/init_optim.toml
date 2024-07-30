@@ -23,7 +23,7 @@ transform = true
 [optim]
 maxiter = 50
 tol = 1e-02
-alpha = 0.1
+alpha = 0.25
 alpha_maxiter = 4
 resample = 0
 optimizer = 'GA'
