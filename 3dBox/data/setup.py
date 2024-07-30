@@ -10,7 +10,7 @@ from mako.runtime import Context
 from subprocess import call,Popen,PIPE,DEVNULL
 from simulator.rockphysics.standardrp import elasticproperties
 from copy import deepcopy
-from pipt.geostat import gaussian_sim
+from geostat import gaussian_sim
 import mat73,shutil,glob
 
 

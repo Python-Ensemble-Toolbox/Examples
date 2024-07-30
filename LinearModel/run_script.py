@@ -4,7 +4,7 @@ from input_output import read_config
 from pipt import pipt_init
 from ensemble.ensemble import Ensemble
 import matplotlib.pyplot as plt
-from pipt.geostat.decomp import Cholesky
+from geostat.decomp import Cholesky
 
 import numpy as np
 np.random.seed(10)

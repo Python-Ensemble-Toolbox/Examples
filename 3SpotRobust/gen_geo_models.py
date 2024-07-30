@@ -1,5 +1,5 @@
 from popt.misc_tools.basic_tools import *
-from pipt.geostat.gaussian_sim import fast_gaussian
+from geostat.gaussian_sim import fast_gaussian
 import numpy as np
 
 models = []
