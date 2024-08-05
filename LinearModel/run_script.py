@@ -19,7 +19,7 @@ sim = lin_1d(kf)
 # en.calc_prediction(save_prediction='test1')
 
 np.random.seed(10)
-analysis = pipt_init.init_da(kd, kf, sim)
+analysis = pipt_init.init_da(kd, kd, sim)
 assimilation = Assimilate(analysis)
 assimilation.run()
 
