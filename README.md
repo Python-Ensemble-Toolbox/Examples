@@ -11,6 +11,7 @@ Folder containing example cases for PIPT and POPT
 - 3dBox         : Data assimilation of a 3D reservoir with 3 injectors and 3 producers. Four different fidelity levels. Set up with ES.
 - Rosenbrock    : Minimize the Rosenbrock function (https://en.wikipedia.org/wiki/Rosenbrock_function) in any dimension
 - Quadratic     : Minimize a quadratic function on the form ||x-b||<sub>A</sub><sup>2</sup>, in any dimension
+- SPE11b        : Data assimilation using synthetic impedance data for the SPE11b case
 
 **Installation**
 

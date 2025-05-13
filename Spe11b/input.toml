@@ -1,0 +1,36 @@
+[dataassim]
+daalg = ["es", "es"]
+analysis = "approx"
+energy = 98.0
+obsvarsave = "yes"
+restartsave = "no"
+analysisdebug = ["pred_data", "state", "data_misfit", "prev_data_misfit"]
+restart = "no"
+obsname = "days"
+ne = 60
+truedataindex = "true_data_index.csv"
+truedata = "true_data.csv"
+assimindex = "assim_index.csv"
+staticvar = ["permx"]
+state = ["permx"]
+datavar = "var.csv"
+prior_permx = [ ["mean",  -2.0], ["var", 0.09,], ["grid", [1, 1, 1,]] ]
+importstaticvar = "prior.npz"
+
+[fwdsim]
+reporttype = "days"
+reportpoint = [366825, 368650, 370475, 372300, 374125]
+replace = "yes"
+saveforecast = "yes"
+sim_limit = 3600.0
+pem = [
+    ["model", "standardrp elasticproperties" ],
+    ["baseline", 365000.0 ],
+    ["vintage", [366825, 368650, 370475, 372300, 374125] ],
+    ["overburden", "overburden.npz" ],
+]
+rerun = 1
+runfile = "SPE11B"
+datatype = ["bulkimp"]
+parallel = 6
+startdate = "1/1/2025"
