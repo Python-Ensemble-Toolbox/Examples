@@ -8,7 +8,7 @@ import numpy as np
 
 from popt.loop.ensemble import Ensemble
 from popt.loop.optimize import Optimize
-from simulator.opm import flow
+from subsurface.multphaseflow.opm import flow
 from input_output import read_config
 from popt.update_schemes.enopt import EnOpt
 from popt.cost_functions.ecalc_npv import ecalc_npv

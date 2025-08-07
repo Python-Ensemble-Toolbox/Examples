@@ -11,6 +11,7 @@ np.random.seed(10)
 
 param = 'permx'
 
+#kd, kf, _ = read_config.read_toml('init_esmda.toml')
 kd, kf = read_config.read_txt('init.pipt')
 sim = lin_1d(kf)
 
@@ -22,6 +23,9 @@ np.random.seed(10)
 analysis = pipt_init.init_da(kd, kd, sim)
 assimilation = Assimilate(analysis)
 assimilation.run()
+
+# Post process - compare with analytic solution
+# ---------------------------------------------
 
 # calculate true KF mean and standard dev
 geostat = Cholesky()
@@ -51,13 +55,20 @@ else:
 CxGT = np.dot(Cm, G.T)
 GCxGT = np.dot(G,CxGT)
 C_inv = np.linalg.inv(GCxGT + Cd)
-K = np.dot(CxGT, C_inv)
+K = np.dot(CxGT, C_inv)  # Kalman gain
 
-x_post = assimilation.ensemble.prior_info[param]['mean'] + np.dot(K, dobs)
-
+# Analytic posterior
+x_prior = assimilation.ensemble.prior_info[param]['mean']
+x_post = x_prior + np.dot(K, dobs)
 Cx_post = Cm - np.dot(K, CxGT.T)
 Sx_post = np.sqrt(np.diag(Cx_post))
 
-plt.figure();plt.plot(assimilation.ensemble.state[param].mean(axis=1));plt.plot(x_post,'r');
-plt.figure();plt.plot(assimilation.ensemble.state[param].std(ddof=1,axis=1));plt.plot(Sx_post,'r');
+# Plot the results
+x_post_ens = assimilation.ensemble.state[param].mean(axis=1)
+Sx_prior = np.sqrt(assimilation.ensemble.prior_info[param]['variance'])*np.ones(x_prior.size)
+Sx_post_ens = assimilation.ensemble.state[param].std(ddof=1,axis=1)
+plt.figure();plt.plot(x_prior,'g');plt.plot(x_post_ens);plt.plot(x_post,'r');
+plt.legend(['Prior','Posterior', 'Analytic']); plt.xlabel('Index'); plt.ylabel('State mean');
+plt.figure();plt.plot(Sx_prior,'g');plt.plot(Sx_post_ens);plt.plot(Sx_post,'r');
+plt.legend(['Prior','Posterior', 'Analytic']); plt.xlabel('Index'); plt.ylabel('State std');
 plt.show()

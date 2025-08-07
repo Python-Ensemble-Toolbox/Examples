@@ -1,0 +1,21 @@
+[ensemble]
+ne = 10
+state = ["vector"]
+prior_vector= [["mean", "init_mean.npz", ],["var", 1.0e-5]]
+
+[optim]
+epf = {"r" = 1.0, "max_epf_iter" = 10, "r_factor" = 15, "tol_factor" = 0.5, "conv_crit" = 0.1}
+maxiter = 50
+tol = 1e-02
+alpha = 1.0
+alpha_maxiter = 4
+resample = 0
+optimizer = 'GA'
+restartsave = true
+restart = false
+hessian = false
+savedata = ["alpha", "obj_func_values"]
+
+[fwdsim]
+parallel = 5
+datatype = ["value"]

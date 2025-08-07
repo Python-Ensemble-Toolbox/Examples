@@ -6,7 +6,7 @@ import os
 import sys
 
 from popt.loop.optimize import Optimize
-from popt.loop.ensemble import Ensemble
+from popt.loop.ensemble_gaussian import GaussianEnsemble
 from simulator.simple_models import noSimulation
 from input_output import read_config
 from popt.update_schemes.enopt import EnOpt
@@ -32,7 +32,7 @@ def main():
     np.savez('init_mean.npz', startmean)
 
     sim = noSimulation(kf)
-    ensemble = Ensemble(ke, sim, rosenbrock)
+    ensemble = GaussianEnsemble(ke, sim, rosenbrock)
     x0 = ensemble.get_state()
     cov = ensemble.get_cov()
     bounds = ensemble.get_bounds()

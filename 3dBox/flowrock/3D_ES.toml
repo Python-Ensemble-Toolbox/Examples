@@ -1,3 +1,41 @@
+[ensemble]
+ne = 64
+state = "permx"
+prior_permx = [
+    [
+        "vario",
+        "sph",
+    ],
+    [
+        "mean",
+        "priormean.npz",
+    ],
+    [
+        "var",
+        1.0,
+    ],
+    [
+        "range",
+        10.0,
+    ],
+    [
+        "aniso",
+        1.0,
+    ],
+    [
+        "angle",
+        0.0,
+    ],
+    [
+        "grid",
+        [
+            60.0,
+            60.0,
+            5.0,
+        ],
+    ],
+]
+
 [dataassim]
 daalg = [
     "es",
@@ -15,7 +53,6 @@ analysisdebug = [
 ]
 restart = "no"
 obsname = "days"
-ne = 64.0
 truedataindex = [
     400,
     800,
@@ -74,42 +111,7 @@ datatype = [
     "bulkimp",
 ]
 staticvar = "permx"
-state = "permx"
 datavar = "../data/var.csv"
-prior_permx = [
-    [
-        "vario",
-        "sph",
-    ],
-    [
-        "mean",
-        "priormean.npz",
-    ],
-    [
-        "var",
-        1.0,
-    ],
-    [
-        "range",
-        10.0,
-    ],
-    [
-        "aniso",
-        1.0,
-    ],
-    [
-        "angle",
-        0.0,
-    ],
-    [
-        "grid",
-        [
-            60.0,
-            60.0,
-            5.0,
-        ],
-    ],
-]
 compress = [
     [
         "field",

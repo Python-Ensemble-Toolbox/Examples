@@ -7,7 +7,7 @@ state = [
 prior_injbhp = [
     [
         "mean",
-        "init_injbhp.npz",
+        [300, 250],
     ],
     [
         "var",

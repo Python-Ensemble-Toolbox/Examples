@@ -8,7 +8,7 @@ import numpy as np
 from mako.lookup import TemplateLookup
 from mako.runtime import Context
 from subprocess import call,Popen,PIPE,DEVNULL
-from simulator.rockphysics.standardrp import elasticproperties
+from subsurface.rockphysics.standardrp import elasticproperties
 from copy import deepcopy
 from geostat import gaussian_sim
 import mat73,shutil,glob
@@ -24,7 +24,9 @@ prod_wells = ['PRO1', 'PRO2', 'PRO3']
 inj_wells = ['INJ1', 'INJ2', 'INJ3']
 prod_data = ['WOPR', 'WWPR']
 inj_data = ['WWIR']
-seis_data = []  # 'sim2seis' or 'bulkimp'
+seis_data = []
+if model == 'flowrock':
+  seis_data.append('bulkimp') # 'sim2seis' or 'bulkimp'
 
 def main():
     # get information about the grid
