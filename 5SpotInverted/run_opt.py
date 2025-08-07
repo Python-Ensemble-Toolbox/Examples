@@ -7,7 +7,7 @@ from glob import glob
 import numpy as np
 
 from popt.loop.optimize import Optimize
-from popt.loop.ensemble import Ensemble
+from popt.loop.ensemble_gaussian import GaussianEnsemble
 from subsurface.multphaseflow.opm import flow
 from input_output import read_config
 from popt.update_schemes.enopt import EnOpt
@@ -28,7 +28,7 @@ def main():
     ko, kf, ke = read_config.read_toml('init_optim.toml')
 
     sim = flow(kf)
-    ensemble = Ensemble(ke, sim, npv)
+    ensemble = GaussianEnsemble(ke, sim, npv)
     x0 = ensemble.get_state()
     cov = ensemble.get_cov()
     bounds = ensemble.get_bounds()
