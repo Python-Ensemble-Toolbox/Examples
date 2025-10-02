@@ -1,12 +1,10 @@
-import sys
 import os
 import glob
 import shutil
-import logging
 from glob import glob
 import numpy as np
 
-from popt.loop.ensemble import Ensemble
+from popt.loop.ensemble_gaussian import GaussianEnsemble
 from popt.loop.optimize import Optimize
 from subsurface.multphaseflow.opm import flow
 from input_output import read_config
@@ -29,7 +27,7 @@ def main():
 
     # Get variables
     sim = flow(kf)
-    ensemble = Ensemble(ke, sim, ecalc_npv)
+    ensemble = GaussianEnsemble(ke, sim, ecalc_npv)
     x0 = ensemble.get_state()
     cov = ensemble.get_cov()
     bounds = ensemble.get_bounds()
@@ -38,7 +36,7 @@ def main():
     EnOpt(ensemble.function, x0, args=(cov,), jac=ensemble.gradient, hess=ensemble.hessian, bounds=bounds, **ko)
 
     # Post-processing: enopt_plot
-    plot_obj_func()
+    plot_obj_func(-1.0)
 
 
 if __name__ == '__main__':

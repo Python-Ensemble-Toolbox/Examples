@@ -50,12 +50,12 @@ MODELS:
 
 FUEL_TYPES:
   - NAME: fuel_gas
-    PRICE: 1.23
+    #PRICE: 1.23
     CATEGORY: FUEL-GAS
     EMISSIONS:
       - NAME: co2_fuel_gas
         FACTOR: 2.416
-        TAX: 1.71
+        #TAX: 1.71
 
 INSTALLATIONS:
   - NAME: drogon_installations

@@ -39,8 +39,8 @@ transform = true
 
 [optim]
 maxiter = 5
-tol = 1e-06
-alpha = 0.2
+tol = 1e-16
+alpha = 0.02
 beta = 0.1
 alpha_maxiter = 3
 resample = 0
@@ -50,6 +50,7 @@ restartsave = true
 restart = false
 hessian = false # used for EnOpt
 inflation_factor = 10
+survival_factor = 0.1
 savedata = [
     "alpha",
     "obj_func_values",
@@ -82,13 +83,12 @@ npv_const = [
         -1.0e6,
     ],
 ]
-parallel = 2
+parallel = 3
 simoptions = [
-    ['mpi', 'mpirun -np 3'],
     ['sim_path', '/usr/bin/'],
     ['sim_flag', '--tolerance-mb=1e-5 --parsing-strictness=low']
     ]
-sim_limit = 4.0
+sim_limit = 400.0
 runfile = "3well"
 reportpoint = [
     1994-02-09 00:00:00,
