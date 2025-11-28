@@ -21,7 +21,7 @@ def main():
     _gen_prior()
 
     # Run file
-    com = ['flow','--output-dir=TRUE_RUN', '--tolerance-mb=1e-7', '--linear-solver=cprw', '--enable-tuning=true', '--newton-min-iterations=1', '--enable-opm-rst-file=true', '--output-extra-convergence-info=steps,iterations', '--enable-well-operability-check=false', '--min-time-step-before-shutting-problematic-wells-in-days=1e-99', f'TRUE_RUN/{case_name}.DATA']
+    com = ['flow','--output-dir=TRUE_RUN', '--linear-solver=cprw', '--enable-opm-rst-file=true', '--output-extra-convergence-info=steps,iterations', f'TRUE_RUN/{case_name}.DATA']
     call(com, stdout=DEVNULL)
 
     case = ecl.EclipseCase(f'TRUE_RUN/{case_name}')
