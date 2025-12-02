@@ -114,15 +114,15 @@ staticvar = "permx"
 datavar = "../data/var.csv"
 compress = [
     [
-        "field",
+        "dim",
         [
-            60.0,
-            60.0,
-            5.0,
+            60,
+            60,
+            5,
         ],
     ],
     [
-        "actnum",
+        "mask",
         "actnum.npz",
         "actnum.npz",
     ],
@@ -155,7 +155,7 @@ compress = [
         "no",
     ],
     [
-        "imp_inactive",
+        "inactive_value",
         0.0,
     ],
     [
@@ -163,8 +163,8 @@ compress = [
         "yes",
     ],
     [
-        "data_order",
-        "c",
+        "order",
+        "f",
     ],
     [
         "min_noise",
@@ -213,6 +213,14 @@ pem = [
         "overburden",
         "overburden.npz",
     ],
+    [
+    	"phases",
+    	[
+    	    "wat",
+    	    "gas",
+    	    "oil",
+    	],
+    ]
 ]
 rerun = 1.0
 runfile = "runfile"
