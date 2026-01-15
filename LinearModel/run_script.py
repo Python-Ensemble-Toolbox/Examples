@@ -50,7 +50,10 @@ else:
         Cd = np.diag(assimilation.ensemble.cov_data)
     else:
         Cd = assimilation.ensemble.cov_data
-    dobs = assimilation.ensemble.obs_data_vector
+    try:
+        dobs = assimilation.ensemble.obs_data_vector
+    except:
+        dobs = assimilation.ensemble.vecObs  
 
 CxGT = np.dot(Cm, G.T)
 GCxGT = np.dot(G,CxGT)
