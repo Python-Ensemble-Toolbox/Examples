@@ -67,9 +67,9 @@ Cx_post = Cm - np.dot(K, CxGT.T)
 Sx_post = np.sqrt(np.diag(Cx_post))
 
 # Plot the results
-x_post_ens = assimilation.ensemble.state[param].mean(axis=1)
+x_post_ens = assimilation.ensemble.enX.mean(axis=1)
 Sx_prior = np.sqrt(assimilation.ensemble.prior_info[param]['variance'])*np.ones(x_prior.size)
-Sx_post_ens = assimilation.ensemble.state[param].std(ddof=1,axis=1)
+Sx_post_ens = assimilation.ensemble.enX.std(ddof=1,axis=1)
 plt.figure();plt.plot(x_prior,'g');plt.plot(x_post_ens);plt.plot(x_post,'r');
 plt.legend(['Prior','Posterior', 'Analytic']); plt.xlabel('Index'); plt.ylabel('State mean');
 plt.figure();plt.plot(Sx_prior,'g');plt.plot(Sx_post_ens);plt.plot(Sx_post,'r');
