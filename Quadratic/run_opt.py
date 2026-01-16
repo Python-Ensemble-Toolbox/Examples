@@ -37,7 +37,7 @@ def main():
     bounds = ensemble.get_bounds()
     EnOpt(ensemble.function, x0, args=(cov,), jac=ensemble.gradient, hess=ensemble.hessian, bounds=bounds, **ko)
 
-    print('Final state: ' + str(ensemble.get_final_state()))
+    print('Final state: ' + str(ensemble.get_state()))
 
 
 if __name__ == '__main__':
