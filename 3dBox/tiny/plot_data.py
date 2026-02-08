@@ -9,7 +9,7 @@ import os
 
 
 # Set paths and find results
-path_to_files = '.'
+path_to_files = './SaveOutputs'
 path_to_figures = './Figures'  # Save here
 save_figure = True  # Use True  for saving the figures
 if not os.path.exists(path_to_figures):
@@ -28,8 +28,10 @@ def plot_prod():
     % Copyright (c) 2023 NORCE, All Rights Reserved.
     """
 
-    obs = np.load(str(path_to_files) + '/obs_var.npz', allow_pickle=True)['obs']
-    data_dates = np.genfromtxt('../data/true_data_index.csv', delimiter=',')
+    obs = np.load('./obs_var.npz', allow_pickle=True)['obs']
+    var = np.load('./obs_var.npz', allow_pickle=True)['var']
+    data_dates = np.genfromtxt('../data/reportdates.csv', delimiter=',', dtype=str, encoding=None)
+    data_dates = np.array([dt.datetime.strptime(d, '%Y-%m-%d %H:%M:%S') for d in data_dates])
     assim_index = np.genfromtxt('../data/assim_index.csv', delimiter=',')
     assim_index = assim_index.astype(int)
 
@@ -54,11 +56,13 @@ def plot_prod():
         t1, t2 = my_data.split()
 
         data_obs = []
+        data_var = []
         data1 = []
         data2 = []
         ref = []
         for ind, i in enumerate(assim_index):
             data_obs.append(obs[i][my_data])
+            data_var.append(var[i][my_data])
             data1.append(pred1[i][my_data])
             data2.append(pred2[i][my_data])
             if ref_data:
@@ -68,6 +72,7 @@ def plot_prod():
                     ref.append(None)
 
         n_d_obs = np.empty(0)
+        n_d_var = np.empty(0)
         x_d = np.empty(0)
         n_d1 = np.empty((ne, 0))
         x_d1 = np.empty(0)
@@ -78,6 +83,7 @@ def plot_prod():
         for ind, i in enumerate(assim_index):
             if data_obs[ind] is not None:
                 n_d_obs = np.append(n_d_obs, data_obs[ind])
+                n_d_var = np.append(n_d_var, data_var[ind])
                 x_d = np.append(x_d, x_days[ind])
             if ref_data and ref[ind] is not None:
                 n_d_ref = np.append(n_d_ref, ref[ind])
@@ -95,7 +101,8 @@ def plot_prod():
         plt.plot(x_d1, np.percentile(n_d1, 100, axis=0), ':k')
         plt.plot(x_d1, np.percentile(n_d1, 10, axis=0), 'k')
         plt.plot(x_d1, np.percentile(n_d1, 0, axis=0), ':k')
-        p1 = plt.plot(x_d, n_d_obs, '.r')
+        # Plot observations with 2 std error bars
+        p1 = ax1.errorbar(x_d, n_d_obs, yerr=2*np.sqrt(n_d_var), fmt='.r', capsize=5, elinewidth=2, markeredgewidth=2)
         p2 = None
         if ref_data:
             p2 = plt.plot(x_d_ref, n_d_ref, 'g')
@@ -105,11 +112,11 @@ def plot_prod():
         p4 = ax1.fill(np.nan, np.nan, 'grey')
         p5 = plt.plot(x_d1, np.mean(n_d1, axis=0), 'orange')
         if p2:
-            ax1.legend([(p1[0],), (p2[0],), (p5[0],), (p3[0],), (p4[0],)],
+            ax1.legend([p1, (p2[0],), (p5[0],), (p3[0],), (p4[0],)],
                        ['obs', 'ref', 'mean', '0-100 pctl', '10-90 pctl'],
                        loc=4, prop={"size": 14}, bbox_to_anchor=(1, -0.5), ncol=2)
         else:
-            ax1.legend([(p1[0],), (p5[0],), (p3[0],), (p4[0],)],
+            ax1.legend([p1, (p5[0],), (p3[0],), (p4[0],)],
                        ['obs', 'mean', '0-100 pctl', '10-90 pctl'],
                        loc=4, prop={"size": 14}, bbox_to_anchor=(1, -0.5), ncol=2)
         plt.title(str(t1) + ' initial forcast, at Well: ' + str(t2), size=20)
@@ -117,7 +124,7 @@ def plot_prod():
         ax1.set_ylim(ylim)
         plt.xticks(fontsize=16)
         plt.yticks(fontsize=16)
-        plt.xlabel('Days', size=20)
+        plt.xlabel('Dates', size=20)
         if "WBHP" in my_data:
             plt.ylabel('Bar', size=20)
         else:
@@ -128,7 +135,8 @@ def plot_prod():
         plt.plot(x_d2, np.percentile(n_d2, 100, axis=0), ':k')
         plt.plot(x_d2, np.percentile(n_d2, 10, axis=0), 'k')
         plt.plot(x_d2, np.percentile(n_d2, 0, axis=0), ':k')
-        plt.plot(x_d, n_d_obs, '.r')
+        # Plot observations with 2 std error bars
+        ax2.errorbar(x_d, n_d_obs, yerr=2*np.sqrt(n_d_var), fmt='.r', capsize=5, elinewidth=2, markeredgewidth=2)
         if ref_data:
             plt.plot(x_d_ref, n_d_ref, 'g')
         ax2.fill_between(x_d2, np.percentile(n_d2, 100, axis=0), np.percentile(n_d2, 0, axis=0), facecolor='lightgrey')
@@ -136,7 +144,7 @@ def plot_prod():
         plt.plot(x_d2, np.mean(n_d2, axis=0), 'orange')
         plt.title(str(t1) + ' final forcast, at Well: ' + str(t2), size=20)
         f.tight_layout(pad=1.0)
-        plt.xlabel('Days', size=20)
+        plt.xlabel('Dates', size=20)
         plt.xticks(fontsize=16)
         plt.yticks(fontsize=16)
         if "WBHP" in my_data:
