@@ -162,7 +162,6 @@ def main():
 
     data_df.index.name = 'dates'
     #data_df.to_csv('data.csv', index=True)
-    data_df.to_pickle('data.pkl')
 
     # Assume data_df is the merged dataframe, including a 'bulkimp' column of lists
 
@@ -207,9 +206,78 @@ def main():
     # Step 3: Combine
     #var_df = pd.concat([var_scalar_df, var_bulkimp.rename('bulkimp')], axis=1)
     var_df = var_scalar_df
-
     var_df.index.name = 'dates'
     # Write the variance for each data point
+
+
+########################################
+    #### make correlated noise
+########################################
+
+    # Extract variance values and create correlation matrices for each time step
+    n_samples = 50  # number of random samples
+    
+    # Correlation parameters
+    corr_range = 1.0  # correlation range (decay length scale)
+    corr_strength = 0.5  # maximum correlation between adjacent variables (0-1)
+    
+    # Initialize dictionary to store empirical variance columns
+    empirical_var_cols = {}
+    
+    for col_name in var_scalar_df.columns:
+        # Extract the variance values for this column across all rows (dates)
+        variance_values = np.array([val[1] for val in var_scalar_df[col_name]])
+        
+        # Create correlation matrix with temporal decay
+        n_vars = len(variance_values)
+        corr_matrix = np.zeros((n_vars, n_vars))
+        
+        for i in range(n_vars):
+            for j in range(n_vars):
+                if i == j:
+                    corr_matrix[i, j] = 1.0
+                else:
+                    # Distance between time steps (based on their position indices)
+                    distance = abs(i - j)
+                    # Exponential decay correlation: corr = strength * exp(-distance / range)
+                    corr_matrix[i, j] = corr_strength * np.exp(-distance / corr_range)
+        
+        # Scale by variance to create covariance matrix
+        std_devs = np.sqrt(variance_values)
+        cov_matrix = corr_matrix * np.outer(std_devs, std_devs)
+        
+        # Generate sample from multivariate normal distribution
+        mean_values = np.zeros(n_vars)
+        samples = np.random.multivariate_normal(mean_values, cov_matrix, size=n_samples)
+        
+        # Store samples for this column
+        # Each row gets its realizations (samples[:, row_idx])
+        empirical_var_cols[col_name] = []
+        for row_idx in range(len(var_scalar_df.index)):
+            empirical_var_cols[col_name].append(['emp', samples[:, row_idx]])
+    
+    # Create dataframe with same structure as var_scalar_df
+    var_empirical_df = pd.DataFrame(empirical_var_cols, index=var_scalar_df.index)
+    var_empirical_df.columns = var_scalar_df.columns
+    var_empirical_df.index.name = 'dates'
+    
+    # Save empirical variance dataframe
+    var_empirical_df.to_csv('var_empirical.csv', index=True)
+    with open('var_empirical.pkl', 'wb') as f:
+        pickle.dump(var_empirical_df, f)
+
+    # modify the data_df in place by adding the noise realization to each scalar column
+    for col_name in var_scalar_df.columns:
+        noise_samples = empirical_var_cols[col_name]
+        # Add the first sample (noise_samples[row_idx][1][0]) to each data point in the column
+        for row_idx in range(len(data_df.index)):
+            if pd.notna(data_df.at[data_df.index[row_idx], col_name]):
+                data_df.at[data_df.index[row_idx], col_name] += noise_samples[row_idx][1][0]
+
+###################################
+###################################
+
+    data_df.to_pickle('data.pkl')
 
     var_df.to_csv('var.csv', index=True)
     with open('var.pkl', 'wb') as f:

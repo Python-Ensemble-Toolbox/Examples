@@ -19,4 +19,3 @@ sim = flow(kf)
 analysis = pipt_init.init_da(kd, ke, sim)
 assimilation = Assimilate(analysis)
 assimilation.run()
-
