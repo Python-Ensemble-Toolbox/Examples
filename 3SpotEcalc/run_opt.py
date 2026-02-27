@@ -6,7 +6,7 @@ import logging
 from glob import glob
 import numpy as np
 
-from popt.loop.ensemble import Ensemble
+from popt.loop.ensemble import GaussianEnsemble
 from popt.loop.optimize import Optimize
 from subsurface.multphaseflow.opm import flow
 from input_output import read_config
