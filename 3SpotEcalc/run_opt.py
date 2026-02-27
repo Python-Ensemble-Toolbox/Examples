@@ -29,7 +29,7 @@ def main():
 
     # Get variables
     sim = flow(kf)
-    ensemble = Ensemble(ke, sim, ecalc_npv)
+    ensemble = GaussianEnsemble(ke, sim, ecalc_npv)
     x0 = ensemble.get_state()
     cov = ensemble.get_cov()
     bounds = ensemble.get_bounds()
