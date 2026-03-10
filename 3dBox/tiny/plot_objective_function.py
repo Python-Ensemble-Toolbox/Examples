@@ -4,7 +4,7 @@ import os
 
 
 # Set paths and find results
-path_to_files = '.'
+path_to_files = './SaveOutputs'
 path_to_figures = './Figures'  # Save here
 if not os.path.exists(path_to_figures):
     os.mkdir(path_to_figures)

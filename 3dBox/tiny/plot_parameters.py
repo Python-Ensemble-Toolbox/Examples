@@ -9,7 +9,7 @@ from scipy.io import loadmat
 
 
 # Set paths and find results
-path_to_files = '.'
+path_to_files = './SaveOutputs'
 path_to_figures = './Figures'  # Save here
 save_figure = True  # Use True  for saving the figures
 if not os.path.exists(path_to_figures):
@@ -53,7 +53,7 @@ def plot_layer(field, f_dim, iter=1, layer_no=1):
     min_post_std = np.nanmin(field_post_std_layer)
 
     # Load Prior field
-    prior = np.load(str(path_to_files) + '/prior.npz')[field]
+    prior = np.load('./prior_ensemble.npz')[field]
     field_prior = np.zeros(f_dim)
     field_prior_std = np.zeros(f_dim)
     field_prior[:] = np.nan
@@ -212,7 +212,7 @@ def export_to_grid(propname):
         post = np.exp(post)
 
     # Load prior property
-    prior = np.load(str(path_to_files) + '/prior.npz')[propname]
+    prior = np.load('./prior_ensemble.npz')[propname]
     if 'perm' in propname:
         prior = np.exp(prior)
 

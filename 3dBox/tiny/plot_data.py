@@ -62,7 +62,7 @@ def plot_prod():
         ref = []
         for ind, i in enumerate(assim_index):
             data_obs.append(obs[i][my_data])
-            data_var.append(var[i][my_data])
+            data_var.append(np.mean(var[i][my_data]))
             data1.append(pred1[i][my_data])
             data2.append(pred2[i][my_data])
             if ref_data:
