@@ -33,7 +33,7 @@ saveforecast = "yes"
 sim_limit = 300.0
 rerun = 1
 runfile = "runfile"
-datatype = ["WOPR PRO1", "WOPR PRO2", "WOPR PRO3", "WWPR PRO1", "WWPR PRO2",
-            "WWPR PRO3", "WWIR INJ1", "WWIR INJ2", "WWIR INJ3"]
+datatype = ["WOPR:PRO1", "WOPR:PRO2", "WOPR:PRO3", "WWPR:PRO1", "WWPR:PRO2",
+            "WWPR:PRO3", "WWIR:INJ1", "WWIR:INJ2", "WWIR:INJ3"]
 parallel = 4
 startdate = "1/1/2022"

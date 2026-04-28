@@ -156,9 +156,6 @@ def main():
     # data_df['bulkimp'] = bulkimp_df['bulkimp'].reindex(data_df.index).apply(
     #                    lambda x: x if isinstance(x, np.ndarray) else None
     #                     )
-    
-    # Replace ':' with ' ' in column headers
-    data_df.columns = data_df.columns.str.replace(':', ' ')
 
     data_df.index.name = 'dates'
     #data_df.to_csv('data.csv', index=True)
