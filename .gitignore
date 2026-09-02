@@ -147,3 +147,16 @@ docs-generated/
 
 # mergetoolfiles
 *.orig
+
+# PET run artifacts
+En_*/
+Crashdump/
+SaveOutputs/
+TRUE_RUN/
+sim_results.p
+*.ECLEND
+# some additions
+e100-test.ipynb
+src/3dBox/*/*.pkl
+src/3dBox/*/*.csv
+src/3dBox/*/*.npz
