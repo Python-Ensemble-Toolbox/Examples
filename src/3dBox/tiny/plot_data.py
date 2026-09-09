@@ -53,7 +53,7 @@ def plot_prod():
         n = tot_key.index(k)
         my_data = tot_key[n]
         print(my_data)
-        t1, t2 = my_data.split()
+        t1, t2 = my_data.replace(':', ' ').split()
 
         data_obs = []
         data_var = []
