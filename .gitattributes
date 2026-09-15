@@ -1,0 +1,3 @@
+# Mako templates are rendered by Python in text mode; CRLF templates yield
+# \r\r\n (blank lines) in generated decks on Windows. Force LF everywhere.
+*.mako text eol=lf
