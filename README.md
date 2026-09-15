@@ -3,7 +3,7 @@ Folder containing example cases for PIPT and POPT
 
 **Data Assimilation Cases**
 - LinearModel   : Fast test for data assimilation methods that does not require an external simulator.
-- 3dBox         : Data assimilation of a 3D reservoir with 3 injectors and 3 producers. Four different fidelity levels. Set up with ES.
+- 3dBox         : Data assimilation of a 3D reservoir with 3 injectors and 3 producers. Four different fidelity levels. Set up with ES. The tiny case can run on Eclipse/Windows (see `src/3dBox/README.md`).
 - SPE11b        : Data assimilation using synthetic impedance data for the SPE11b case
 
 **Optimization Cases**
