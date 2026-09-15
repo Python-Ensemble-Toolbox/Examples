@@ -10,17 +10,22 @@ import numpy as np
 RUNSPEC
 
 TITLE
- TINY BOX MODEL
+TINY BOX MODEL
 
---DIMENS
+% if context.get('nx'):
+DIMENS
 -- NDIVIX NDIVIY NDIVIZ
---   40    20      5 /
+   ${nx}     ${ny}      ${nz} /
+% endif
 
 --BLACKOIL
 OIL
 WATER
 GAS
 DISGAS
+% if context.get('vapoil'):
+VAPOIL
+% endif
 
 METRIC
 

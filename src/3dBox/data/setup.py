@@ -25,6 +25,11 @@ from copy import deepcopy
 from geostat import gaussian_sim
 import mat73,shutil,glob
 
+from pathlib import Path
+import warnings
+warnings.filterwarnings("ignore", category=DeprecationWarning,
+                         message="resdata vectors are deprecated")
+
 
 # This scipt generates the true data for the ML data-assimilation study.
 
@@ -32,8 +37,48 @@ import mat73,shutil,glob
 # via the RESDATA package.
 
 # define the test case
-model = 'tiny'  # 'tiny', 'small', 'medium', 'large', or 'flowrock'
-case_name = 'RUNFILE'
+# these are the defaults used when this script is run directly
+# (python setup.py); main() takes them as arguments so a case's
+# run_script.py can drive it too
+MODEL = 'tiny'     # 'tiny', 'small', 'medium', 'large', or 'flowrock'
+SIMULATOR = 'eclipse'   # 'eclipse' or 'flow'
+case_name = 'RUNFILE' 
+
+SIMULATORS = {
+    'flow': 
+    ['flow', '--output-dir=TRUE_RUN', f'TRUE_RUN/{case_name}.DATA'],
+    'eclipse': 
+    ['eclrun', '--nocleanup', #    '--version=2013.1',
+    'eclipse', f'TRUE_RUN/{case_name}.DATA'],
+}
+
+# NOTE: this directory holds the truth data for ONE model at a time. The
+# outputs below are written with bare names (data.pkl, var.csv, ...) and every
+# 3dBox case reads the same ../data/ folder, so regenerating for a different
+# model_size overwrites the previous one. Because all models share the same
+# well names and report dates, a stale file loads silently rather than
+# erroring - regenerate when switching model_size.
+
+
+def main(simulator=SIMULATOR, model=MODEL):
+    """Generate the truth data for one 3dBox case.
+
+    Everything below addresses files by plain relative paths: the grid at
+    ../<model>/grid/, the RUNFILE.mako template that Mako looks up in the
+    current directory, and the outputs (TRUE_RUN/, data.pkl, *.csv) written
+    next to this script. Those only resolve when data/ is the working
+    directory - true when you run `python setup.py` by hand, but not when a
+    case's run_script.py calls main() from its own folder. So switch to this
+    file's folder for the duration, and restore the caller's on the way out
+    (including if the run raises).
+    """
+    prev = os.getcwd()
+    os.chdir(Path(__file__).parent)
+    try:
+        _build_true_case(simulator, model)
+    finally:
+        os.chdir(prev)
+
 
 # define the data
 prod_wells = ['PRO1', 'PRO2', 'PRO3']
@@ -42,7 +87,9 @@ prod_data = ['WOPR', 'WWPR']
 inj_data = ['WWIR']
 seis_data = ['bulkimp']
 
-def main():
+def _build_true_case(simulator, model):
+
+    com = SIMULATORS[simulator]
 
     grid = grdecl.read(f'../{model}/grid/Grid.grdecl')
 
@@ -57,12 +104,15 @@ def main():
         shutil.rmtree('TRUE_RUN')
     os.mkdir('TRUE_RUN') # folder for run
     # use a context and render onto a file
+    # pass the grid size on to the template, so DIMENS always matches the grid
+    # this deck INCLUDEs - otherwise switching `model` above silently produces a
+    # deck whose DIMENS contradicts ../<model>/grid/Grid.grdecl
+    nx, ny, nz = (int(d) for d in grid['DIMENS'])
     with open(f'TRUE_RUN/{case_name}.DATA','w') as f:
-        ctx = Context(f, **{'model':model,'permx':permx})
+        ctx = Context(f, **{'model':model,'permx':permx,
+                            'nx':nx,'ny':ny,'nz':nz,'vapoil':True})
         tmpl.render_context(ctx)
 
-    # Run file
-    com = ['flow','--output-dir=TRUE_RUN', f'TRUE_RUN/{case_name}.DATA']
     call(com, stdout=DEVNULL)
     
     case = Summary(f'TRUE_RUN/{case_name}')
@@ -293,7 +343,10 @@ def main():
         for c, idx in enumerate(data_df.index):
             writer.writerow([idx.strftime('%Y-%m-%d %H:%M:%S')])
 
-    sys.exit()
+    # everything below is unreachable. Use return, not sys.exit(): when a
+    # run_script.py calls main(), sys.exit() raises SystemExit and would kill
+    # the caller's process silently instead of just ending this function.
+    return
     ######################
 
     for time in assim_time:
