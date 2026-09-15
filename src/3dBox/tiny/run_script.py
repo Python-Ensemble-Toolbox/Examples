@@ -5,8 +5,7 @@ from input_output import read_config
 from pipt import pipt_init
 from ensemble.ensemble import Ensemble
 from misc import grdecl
-
-# fix the seed for reproducability
+# fix the seed for reproducibility
 import sys
 import numpy as np
 np.random.seed(10)
@@ -16,18 +15,18 @@ warnings.filterwarnings("ignore", category=DeprecationWarning,
                          message="resdata vectors are deprecated")
 
 # ── settings ──────────────────────────────────────────────────────────────
-simulator = 'eclipse'      # 'eclipse' (ecl_100) or 'flow' (OPM)
-model = 'tiny'        # which 3dBox grid this case uses
-regenerate_truth = True   # True -> rebuild ../data/*.pkl before assimilating
+SIMULATOR = 'eclipse'      # 'eclipse' (ecl_100) or 'flow' (OPM)
+TRUE_CASE = 'tiny'        # which 3dBox grid this case uses
+REGENERATE_TRUTH = True   # True -> rebuild ../data/*.pkl before assimilating
 # ──────────────────────────────────────────────────────────────────────────
 
-if regenerate_truth:
+if REGENERATE_TRUTH:
     # ../data is not an importable package, so put it on the path first. The
     # import lives in here because it pulls in mat73/geostat/resdata/mako,
     # which are only needed when actually regenerating.
     sys.path.insert(0, '../data')
     import setup as true_case  # ../data/setup.py
-    true_case.main(simulator, model=model)
+    true_case.main(SIMULATOR, model=TRUE_CASE)
 
 kd, kf, ke = read_config.read_toml('3D_ESMDA.toml')  # Run with ESMDA and toml input format
 #kd, kf = read_config.read_txt('3D_ES.pipt')  # Run with ES and plain text input format
@@ -39,7 +38,7 @@ kd, kf, ke = read_config.read_toml('3D_ESMDA.toml')  # Run with ESMDA and toml i
 nx, ny, nz = (int(d) for d in grdecl.read('grid/Grid.grdecl')['DIMENS'])
 kf['mako_kwargs'] = {'nx': nx, 'ny': ny, 'nz': nz, 'vapoil': True}
 
-if simulator == 'eclipse':
+if SIMULATOR == 'eclipse':
     kf['parallel'] = 1  # adjusting for one eclipse license
     sim = ecl_100(kf)
 else:
