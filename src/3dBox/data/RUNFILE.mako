@@ -10,7 +10,7 @@ import numpy as np
 RUNSPEC
 
 TITLE
- INVERTED 5 SPOT MODEL
+INVERTED 5 SPOT MODEL
 
 % if context.get('nx'):
 DIMENS
