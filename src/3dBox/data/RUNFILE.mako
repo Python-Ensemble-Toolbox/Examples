@@ -12,15 +12,20 @@ RUNSPEC
 TITLE
  INVERTED 5 SPOT MODEL
 
---DIMENS
+% if context.get('nx'):
+DIMENS
 -- NDIVIX NDIVIY NDIVIZ
---   60    60      5 /
+   ${nx}     ${ny}      ${nz} /
+% endif
 
 --BLACKOIL
 OIL
 WATER
 GAS
 DISGAS
+% if context.get('vapoil'):
+VAPOIL
+% endif
 
 METRIC
 

@@ -160,3 +160,4 @@ e100-test.ipynb
 src/3dBox/*/*.pkl
 src/3dBox/*/*.csv
 src/3dBox/*/*.npz
+src/3dBox/*/Figures/
