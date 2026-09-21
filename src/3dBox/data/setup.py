@@ -41,7 +41,8 @@ warnings.filterwarnings("ignore", category=DeprecationWarning,
 # (python setup.py); main() takes them as arguments so a case's
 # run_script.py can drive it too
 MODEL = 'tiny'     # 'tiny', 'small', 'medium', 'large', or 'flowrock'
-SIMULATOR = 'eclipse'   # 'eclipse' or 'flow'
+# SIMULATOR = 'eclipse'   # 'eclipse' or 'flow'
+SIMULATOR = 'flow'      # 'eclipse' or 'flow'
 case_name = 'RUNFILE' 
 
 SIMULATORS = {
