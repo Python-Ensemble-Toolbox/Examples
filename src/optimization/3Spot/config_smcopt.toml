@@ -1,0 +1,39 @@
+# Sequential Monte Carlo optimization (SmcOpt) on a 2D field with two injectors and one producer:
+# find the bottom-hole pressures (BHP) that maximize the net present value (NPV)
+
+[ensemble]
+    ne = 10                     # samples drawn around the controls in each iteration
+    seed = 101122               # random seed, makes the run reproducible
+    save_prior = false          # don't write the initial ensemble to prior_ensemble.npz
+
+    [ensemble.controls]
+        # constant BHP for the whole run [bar]: starting point, perturbation variance and bounds
+        injbhp = { mean = [300.0, 250.0], var = 6250.0, limits = [100.0, 500.0] }   # INJ-1, INJ-2
+        prodbhp = { mean = [100.0], var = 6250.0, limits = [20.0, 300.0] }          # PRO-1
+
+[optim]
+    maxiter = 20                # maximum number of iterations
+    tol = 1e-16                 # smallest decrease of the objective that counts as progress
+    alpha = 0.02                # step size: weight of the new estimate against the current controls
+    alpha_maxiter = 3           # step-size halvings per iteration
+    inflation_factor = 10       # weighs down the influence of the sampling distribution
+    survival_factor = 0.1       # fraction of the samples that survive into the new estimate
+    # log file of the run
+    logger_name = "OPTIM_smcopt.log"
+    saveit = true               # save the result of every iteration ...
+    savefolder = "results_smcopt"   # ... in this folder
+
+[simulator]
+    runfile = "3WELL"           # simulator input template: 3WELL.mako
+    parallel = 5                # simulations run at the same time
+    datatype = ["FOPT", "FGPT", "FWPT", "FWIT"]   # field oil, gas and water production, water injection
+    reporttype = "dates"        # report points are dates: the start, then every new year
+    reportpoint = [1994-02-09, 1995-01-01, 1996-01-01, 1997-01-01, 1998-01-01, 1999-01-01]
+
+    [simulator.npv_const]       # economic constants for the NPV
+        wop = 283.05            # oil price [USD/Sm3]
+        wgp = 0.0               # gas price [USD/Sm3]
+        wwp = 37.74             # cost of water production [USD/Sm3]
+        wwi = 12.58             # cost of water injection [USD/Sm3]
+        disc = 0.08             # yearly discount rate
+        obj_scaling = -1e6      # NPV is divided by this: negative (to minimize) and in million USD

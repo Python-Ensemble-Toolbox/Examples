@@ -1,0 +1,34 @@
+# ES-MDA on a linear model: estimate a 1D field of 150 cells from noisy observations of every fifth cell
+
+[ensemble]
+    ne = 250                    # ensemble size
+    seed = 10                   # random seed, makes the run reproducible
+    state = "permx"             # the estimated field
+
+    [ensemble.prior_permx]      # Gaussian prior of the field
+        mean = "priormean.npz"  # prior mean, one value per cell (zero)
+        var = 1.0               # prior variance
+        vario = "sph"           # spherical variogram ...
+        range = 20.0            # ... with a correlation length of 20 cells
+        aniso = 1.0             # no anisotropy
+        angle = 0.0             # no rotation
+        grid = [150, 1]         # 150 x 1 cells
+
+[dataassim]
+    scheme = "esmda"            # ensemble smoother with multiple data assimilation
+    analysis = "approx"         # the standard ensemble update (no extra pull towards the prior)
+    energy = 95.0               # truncation energy of the SVD [%]
+    obsname = "position"        # name of the data index (the observed cells)
+    data = "data.csv"           # observations, from write_data.py
+    datavar = "var.csv"         # observation variances
+    savefolder = "results"      # folder for the results
+
+    [dataassim.mda]
+        tot_assim_steps = 3             # number of assimilation steps
+        inflation_param = [2, 4, 4]     # variance inflation in each step (inverses sum to 1)
+
+[simulator]
+    reporttype = "position"     # the data are indexed by position ...
+    reportpoint = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95,
+                   100, 105, 110, 115, 120, 125, 130, 135, 140, 145]   # ... the observed cells
+    datatype = ["value"]        # the observed quantity

@@ -1,0 +1,19 @@
+# Unconstrained EnOpt on the quadratic f(x) = 0.5 * ||x - 1||^2
+
+[ensemble]
+    ne = 10                 # perturbations per gradient estimate
+    seed = 101122           # random seed, makes the run reproducible
+    save_prior = false      # don't write the initial ensemble to prior_ensemble.npz
+
+    [ensemble.controls]
+        # control vector: starting point, perturbation variance and bounds
+        x = { mean = [5.0, 5.0], var = 1.0e-5, limits = [-10.0, 10.0] }
+
+[optim]
+    optimizer = "GD"        # update rule: gradient descent
+    transform = true        # optimise in the unit cube [0, 1]^n
+    maxiter = 50            # maximum number of iterations
+    tol = 1e-6              # smallest decrease of the objective that counts as progress
+    alpha = 0.25            # step size
+    alpha_maxiter = 10      # step-size halvings per iteration
+    resample = 3            # new gradient estimates per iteration if no step improves

@@ -1,0 +1,44 @@
+# Line search (steepest descent) on TinyBox, with three injectors and three producers: find the bottom-hole
+# pressures (BHP) that maximize the NPV, including the cost of the CO2 the facility emits,
+# as computed by eCalc
+
+[ensemble]
+    ne = 10                     # perturbations per gradient estimate
+    seed = 101122               # random seed, makes the run reproducible
+    save_prior = false          # don't write the initial ensemble to prior_ensemble.npz
+    natural_gradient = false    # return the plain gradient of the NPV
+
+    [ensemble.controls]
+        # constant BHP for the whole run [bar]: starting point, perturbation std and bounds
+        injbhp = { mean = [300.0, 300.0, 300.0], std = "5%", limits = [210.0, 400.0] }   # INJ1-INJ3
+        prodbhp = { mean = [90.0, 90.0, 90.0], std = "5%", limits = [50.0, 180.0] }      # PRO1-PRO3
+
+[optim]
+    transform = true            # optimise in the unit cube [0, 1]^n
+    maxiter = 10                # maximum number of iterations
+    lsmethod = 0                # line search: backtracking, halving the step until the NPV improves enough
+    step_size = 0.1             # first trial step of every line search ...
+    step_size_adapt = 0         # ... kept fixed, not adapted between iterations
+    saveit = true               # save the result of every iteration ...
+    savefolder = "results"      # ... as results/optimize_result_<iteration>.npz
+
+[simulator]
+    runfile = "TINYBOX"         # simulator input template: TINYBOX.mako
+    parallel = 5                # simulations run at the same time
+    datatype = ["FOPT", "FGPT", "FWPT", "FWIT"]   # field oil, gas and water production, water injection
+    reporttype = "dates"        # report points are dates ...
+
+    [simulator.reportpoint]     # ... the start, then every 400 days
+        start = "2022-01-01"
+        end = "2032-12-14"
+        freq = "400D"
+
+    [simulator.npv_const]       # economic constants for the NPV (the defaults of subsurface.cost_functions.npv)
+        wop = 471.0             # oil price [USD/Sm3] (75 USD/bbl)
+        wgp = 0.4               # gas price [USD/Sm3]
+        wwp = 40.0              # cost of water production [USD/Sm3]
+        wwi = 25.0              # cost of water injection [USD/Sm3]
+        wem = 150.0             # cost of CO2 emissions [USD/ton]
+        wfu = 80.0              # cost of fuel [USD/ton] (not used here: the simulator reports no fuel)
+        disc = 0.08             # yearly discount rate
+        obj_scaling = -1e9      # NPV is divided by this: negative (to minimize) and in billion USD

@@ -1,0 +1,40 @@
+# ES on the SPE11B CO2-storage case: estimate the log-permeability from time-lapse seismic
+# (bulk impedance), computed by a rock-physics model
+
+[ensemble]
+    ne = 60                     # ensemble size
+    seed = 10                   # random seed, makes the run reproducible
+    state = "permx"             # the estimated field: log-permeability
+    importstate = "prior.npz"   # the prior ensemble, drawn per rock type by make_data.py
+
+    [ensemble.prior_permx]      # with an imported prior, only the variance is used:
+        var = 0.09              # it scales the state in the update
+
+[dataassim]
+    scheme = "es"               # ensemble smoother: one update with all the data
+    analysis = "approx"         # the standard ensemble update
+    energy = 98.0               # truncation energy of the SVD [%]
+    obsname = "days"            # name of the data index
+    data = "data.csv"           # observations, from make_data.py
+    datavar = "var.csv"         # observation variances
+    savefolder = "results"      # folder for the results
+    savedata = ["ensemble_misfit"]  # saved before and after the update, as results/assimilation_result_<step>.npz
+
+[simulator]
+    runfile = "SPE11B"          # simulator input template: SPE11B.mako
+    parallel = 6                # simulations run at the same time
+    sim_limit = 1800.0          # stop a simulation after this many seconds
+    startdate = "1/1/2025"      # start of the simulation (day/month/year)
+    reporttype = "days"         # report points are days since the start ...
+    reportpoint = [1825, 3650, 5475, 7300, 9125]   # ... every five years of injection
+    datatype = ["bulkimp"]      # bulk impedance
+
+    # options for OPM Flow: a 30-day maximum time step keeps the CO2 injection stable
+    simoptions = [["sim_flag", "--linear-solver=cprw --solver-max-time-step-in-days=30"]]
+
+    # rock-physics model: bulk impedance at each vintage, minus at the baseline
+    pem = [["model", "standardrp elasticproperties"],              # the rock-physics model
+           ["baseline", 0.0],                                      # baseline survey [days]
+           ["vintage", [1825.0, 3650.0, 5475.0, 7300.0, 9125.0]],  # monitor surveys [days]
+           ["overburden", "overburden.npz"],                       # overburden pressure
+           ["phases", ["wat", "gas"]]]                             # fluid phases (CO2 is the gas)
