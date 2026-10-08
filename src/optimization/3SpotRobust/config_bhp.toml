@@ -1,0 +1,45 @@
+# Robust EnOpt on a 2D field with two injectors and one producer: find the bottom-hole
+# pressures (BHP) that maximize the NPV averaged over five geological models
+
+[ensemble]
+    ne = 10                     # perturbations per gradient estimate (two per geological model)
+    num_models = 5              # geological models the NPV is averaged over
+    seed = 270623               # random seed, makes the run reproducible
+    save_prior = false          # don't write the initial ensemble to prior_ensemble.npz
+
+    [ensemble.controls]
+        # BHP every 30 days for five years [bar]: starting point (written by run_opt.py),
+        # perturbation variance and bounds. injbhp holds both injectors, interleaved.
+        injbhp = { mean = "initial_controls.npz", var = 6250.0, limits = [200.0, 400.0] }
+        prodbhp = { mean = "initial_controls.npz", var = 6250.0, limits = [100.0, 200.0] }
+
+[optim]
+    optimizer = "GD"            # update rule: gradient descent
+    transform = true            # optimise in the unit cube [0, 1]^n
+    maxiter = 15                # maximum number of iterations
+    tol = 1e-3                  # smallest decrease of the objective that counts as progress
+    alpha = 0.5                 # step size
+    alpha_maxiter = 2           # step-size halvings per iteration
+    # log file of the run
+    logger_name = "OPTIM_bhp.log"
+    saveit = true               # save the result of every iteration ...
+    savefolder = "results_bhp"  # ... as results_bhp/optimize_result_<iteration>.npz
+
+[simulator]
+    runfile = "3WELL_BHP"       # simulator input template: 3WELL_BHP.mako
+    parallel = 5                # simulations run at the same time
+    datatype = ["FOPT", "FGPT", "FWPT", "FWIT"]   # field oil, gas and water production, water injection
+    reporttype = "dates"        # report points are dates ...
+
+    [simulator.reportpoint]     # ... every 30 days
+        start = "2029-01-31"
+        end = "2033-12-06"
+        freq = "30D"
+
+    [simulator.npv_const]       # economic constants for the NPV
+        wop = 283.05            # oil price [USD/Sm3]
+        wgp = 0.0               # gas price [USD/Sm3]
+        wwp = 37.74             # cost of water disposal [USD/Sm3]
+        wwi = 12.58             # cost of water injection [USD/Sm3]
+        disc = 0.08             # yearly discount rate
+        obj_scaling = -1e6      # NPV is divided by this: negative (to minimize) and in million USD

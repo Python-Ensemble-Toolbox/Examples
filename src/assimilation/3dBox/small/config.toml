@@ -1,0 +1,33 @@
+# ES on the small 3D box (40x20x5): estimate the log-permeability from well rates
+
+[ensemble]
+    ne = 50                     # ensemble size
+    seed = 10                   # random seed, makes the run reproducible
+    state = "permx"             # the estimated field: log-permeability
+
+    [ensemble.prior_permx]      # Gaussian prior of the field
+        mean = "priormean.npz"  # prior mean, one value per cell (4.0)
+        var = 1.0               # prior variance
+        vario = "sph"           # spherical variogram ...
+        range = 10.0            # ... with a correlation length of 10 cells
+        aniso = 1.0             # no anisotropy
+        angle = 0.0             # no rotation
+        grid = [40, 20, 5]      # grid size
+
+[dataassim]
+    scheme = "es"               # ensemble smoother: one update with all the data
+    analysis = "approx"         # the standard ensemble update
+    energy = 98.0               # truncation energy of the SVD [%]
+    obsname = "days"            # name of the data index
+    data = "data.csv"           # observations, from ../make_data.py
+    datavar = "var.csv"         # observation variances
+    savefolder = "results"      # folder for the results
+    savedata = ["ensemble_misfit"]  # saved before and after the update, as results/assimilation_result_<step>.npz
+
+[simulator]
+    runfile = "RUNFILE"         # simulator input template: RUNFILE.mako
+    parallel = 8                # simulations run at the same time
+    reporttype = "days"         # report points are days since the start ...
+    reportpoint = [400, 800, 1200, 1600, 2000, 2400, 2800, 3200, 3600, 4000]   # ... every 400 days
+    datatype = ["WOPR:PRO1", "WWPR:PRO1", "WOPR:PRO2", "WWPR:PRO2",
+                "WOPR:PRO3", "WWPR:PRO3", "WWIR:INJ1"]   # oil and water rates of the wells
