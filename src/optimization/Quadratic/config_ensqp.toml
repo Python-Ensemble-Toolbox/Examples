@@ -1,0 +1,20 @@
+# Constrained optimization of the quadratic f(x) = 0.5 * ||x - 1||^2 with EnSQP,
+# ensemble-based sequential quadratic programming: the constraints are returned
+# by the objective and handled by the optimizer, with no penalty function
+
+[ensemble]
+    ne = 10                 # perturbations per estimate of the gradient and the constraint Jacobian
+    seed = 101122           # random seed, makes the run reproducible
+    save_prior = false      # don't write the initial ensemble to prior_ensemble.npz
+
+    [ensemble.controls]
+        # control vector: starting point, perturbation variance and bounds
+        x = { mean = [5.0, 5.0], var = 1.0e-5, limits = [-10.0, 10.0] }
+
+[optim]
+    transform = true        # optimise in the unit cube [0, 1]^n
+    maxiter = 50            # maximum number of iterations
+    hessian = "bfgs"        # Hessian of the Lagrangian: built from the changes in the gradients
+    ctol = 1e-6             # largest constraint violation accepted at convergence
+    alpha_maxiter = 10      # step halvings per iteration
+    resample = 3            # new ensembles per iteration if no step improves
