@@ -11,7 +11,7 @@ Folder containing example cases for PIPT and POPT
 - 3SpotRobust   : Simple case to test optimization methods including multiple geo-models.
 - TinyBoxEcalc  : Optimize the well pressures of TinyBox (oil, gas and water) for NPV, including the cost of CO2 emissions computed by eCalc.
 - Rosenbrock    : Minimize the Rosenbrock function (https://en.wikipedia.org/wiki/Rosenbrock_function) in any dimension
-- Quadratic     : Minimize a quadratic function on the form ||x-b||<sub>A</sub><sup>2</sup>, in any dimension
+- Quadratic     : Minimize a quadratic function on the form ||x-b||<sub>A</sub><sup>2</sup>. Three cases are run: EnOpt without constraints, EnOpt with constraints handled by an exterior penalty function (EPF), and EnSQP with the constraints handled by the optimizer.
  
 **Installation**
 
